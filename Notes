@@ -1,0 +1,39 @@
+entropie d'un texte
+
+hypothèse: chaque lettre est équiprobable
+
+une lettre a une entropie de log2(N)
+N=nombre de lettres possibles (ex: alphabet 26)
+
+caractères ASCII imprimables:
+⁃  26 lettres minuscules
+⁃  26 lettres majuscules
+⁃  10 chiffres
+⁃  32 symboles
+⁃  une espace sans représentation affichable ou affiché sans représentation.
+
+95 caractères possibles
+
+log2(95)=6.56985560833094784171
+
+travail 1: calculer la probabilité de chaque lettre dans un corpus
+
+map reduce
+
+travail 2: calculer l'entropie d'un texte où "il n'y a pas de mot",
+c'est à dire que chaque lettre a un poid comme trouvé précédemment
+mais où les lettres ne forment pas de mot
+
+pour chaque lettre ayant une probabilité Pi
+
+H = -Sum [i=1 à n] { Pi*log2(Pi) }
+
+travail 3: calculer la probabilité pour les mots
+probabilité conditionnelle couples de lettres
+
+le mot: "lettre"
+
+p(l) =
+p(e précédé de l) =
+p(t précédé de e) =
+ou même mieux p(t précédé de e précédé de l) =
