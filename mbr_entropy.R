@@ -1,49 +1,53 @@
+
 library(readr)
 
-mbr_e_initialized <- FALSE
-mbr_e_with_spaces <- FALSE
+with_spaces <- FALSE
 
-dict<-"~/conf/git/entropy/lettres_avec_espaces"
+specials <- read_file("caractères_spéciaux")
+nc <- nchar(specials)
+sc <- strsplit(specials, "")
+# rempli un tableau de nc fois la valeur 0
+a <- 0.1
+z <- rep(a, nc)
+# constuit un tableau avec les valeurs de z et les noms issus des valeurs de sc
+scp<-array(c(z),dimnames = sc)
 
-mbr_entropy_init <- function (dict, with_spaces) {
+dict <- "lettres_avec_espaces"
 
+entropy_init <- function (dict, spaces=FALSE) {
+
+  with_spaces <<- spaces
+  
   #string <<- scan(dict, character(), quote = "", sep = NULL)
   string <<- read_file(dict)
   N <<- nchar(string)
   chars <<- strsplit(string, "")
   occurs <<- table(chars)
   probs <<- occurs / N
-  mbr_e_initialized <<- TRUE
-  mbr_e_with_spaces <<- with_spaces
+  probs_c <<- append(probs, scp)
 
 }
 
-#mbr_entropy <- function (txt) {
+entropy <- function (txt) {
 
   H <- 0
 
-  #if (!mbr_e_with_spaces) {
-  #  txt <- gsub("[:space:]+", "", txt)
-  #}
-  txt<-"un texte"
-  print(paste("Texte d'entrée : ",txt))
-
+  if (!with_spaces) {
+    print("Suppression des espaces du texte d'entrée...")
+    txt <- gsub("[:space:]+", "", txt)
+  }
+  
   s <- strsplit(txt, "")
 
-  print(paste("Splited : ",s))
+  #n <- names(probs)
+  
+  print("Calcul de l'entropie de Shannon...")
+  
+  h <- - sum( probs_c[ s[[1]] ] * log2( probs_c[ s[[1]] ]) )
+  
+  print(h)
+  
+  return (h)
+}
 
-  for (i in s) {
-
-    print(paste("Lettre :", i))
-
-    if (!i %in% probs) {
-      p <- probs[i]
-      print(paste("Lettre : ", i, " de probabilité : ", p))
-      print(H)
-      H <- H + p * log2(p)
-      print(H)
-    }
-  }
-
-  return(H)
-#}
+#sum(-(probs[s[[1]]]/log2(probs[s[[1]]])))

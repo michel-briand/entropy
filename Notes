@@ -37,3 +37,19 @@ p(l) =
 p(e précédé de l) =
 p(t précédé de e) =
 ou même mieux p(t précédé de e précédé de l) =
+
+--
+préparation du dictionnaire
+
+Majuscule->minuscules
+
+lister les caractères spéciaux:
+1234567890°+
+&é"'(-è_çà)=
+~#{[|`\^@]}
+$£ù%*µ
+,?;.:/!§
+
+choisir une probabilité arbitraire (hypothèse) pour 
+chaque caractère spécial et insérer ces valeurs dans la table 'probs'
+
