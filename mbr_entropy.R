@@ -1,24 +1,51 @@
+# Entropie de Shannon
+#
+# Calcul brut.
+# Cf notes.
 
-library(readr)
+require(readr)
 
-with_spaces <- FALSE
+remove_spaces <- FALSE
+word_split <- " "
+lower_case <- TRUE
 
+# Charge une fichier de caractères spéciaux afin de le transformer en vecteur
 specials <- read_file("caractères_spéciaux")
 nc <- nchar(specials)
 sc <- strsplit(specials, "")
-# rempli un tableau de nc fois la valeur 0
-a <- 0.001
+# Rempli ce tableau de nc fois la valeur spécifiée : 
+# choix arbitraire d'une probabilité pour chaque caractère spécial
+a <- 1e-05
 z <- rep(a, nc)
 # constuit un tableau avec les valeurs de z et les noms issus des valeurs de sc
 scp<-array(c(z),dimnames = sc)
 
-dict <- "lettres_avec_espaces"
+# TODO: Complétter le tableau des caractères avec tous les caractères présents dans le texte mais
+# non présents dans le dictionnaire en leur assigner une probabilité arbitraire (on n'a pas le choix)
 
-entropy_init <- function (dict, spaces=FALSE) {
+# Dictionnaire par défaut
+dict <- "français"
 
-  with_spaces <<- spaces
+# Fichier d'entrée
+entropy_init <- function (dict, rspaces=TRUE, wsplit=" ", lcase=TRUE) {
+
+  remove_spaces <<- rspaces
+  word_split <<- wsplit
+  lower_case <<- lcase
   
   string <<- read_file(dict)
+  # supprime les séparateurs de mots (espace ou retour chariot)
+  string <<- gsub(word_split, "", string)
+  # supprime les espaces si demandé
+  if (remove_spaces) {
+    string <<- gsub("[:space:]+", "", string)
+  }
+  
+  # Uniformise la casse si demandé
+  if (lcase) {
+    string <<- tolower(string)
+  }
+  
   N <<- nchar(string)
   chars <<- strsplit(string, "")
   occurs <<- table(chars)
@@ -28,18 +55,19 @@ entropy_init <- function (dict, spaces=FALSE) {
 }
 
 entropy <- function (txt) {
-  
-  print(paste("Texte d'entrée:", txt))
 
-  if (!with_spaces) {
-    print("Suppression des espaces du texte d'entrée...")
+  if (remove_spaces) {
     txt <- gsub("[:space:]+", "", txt)
   }
+
+  # Uniformise la casse si demandé
+  if (lower_case) {
+    txt <- tolower(txt)
+  }
   
+  # Transformer la chaine d'entrée en liste de caractères  
   s <- strsplit(txt, "")
 
-  print("Calcul de l'entropie de Shannon...")
-  
   # L'entropie de Shannon est H = - somme de 1 à N de [ p * log2(p) ]
   # p étant la probabilité du caractère i
   
@@ -49,8 +77,10 @@ entropy <- function (txt) {
   # l'appel à probs_c[ s[[1]] ]
   # donne un tableau des probabilités des caractères dans le tableau s[[1]]
   
-  h <- - sum( probs_c[ s[[1]] ] * log2( probs_c[ s[[1]] ]) )
-  
+
+  ns <- probs_c[ s[[1]] ]
+  h <- - sum( ns * log2(ns) )
+
   return (h)
 }
 
